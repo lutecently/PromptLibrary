@@ -4,12 +4,11 @@ import { StarIcon, TagIcon } from '@heroicons/react/24/solid';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Prompt } from '@/types';
 import { format, differenceInDays } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 
 interface PromptCardProps {
     prompt: Prompt;
     onDelete?: (slug: string) => void;
-    isNew?: boolean; // 可选的isNew属性，允许外部传入
+    isNew?: boolean; // Optional isNew override, allows the caller to force the value
 }
 
 const PromptCard: React.FC<PromptCardProps> = ({ prompt, onDelete, isNew: explicitIsNew }) => {
@@ -24,10 +23,10 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onDelete, isNew: explic
         image,
     } = prompt;
 
-    // 格式化日期
-    const formattedDate = format(new Date(createdAt), 'yyyy年MM月dd日', { locale: zhCN });
+    // Format the date
+    const formattedDate = format(new Date(createdAt), 'MMM d, yyyy');
 
-    // 判断是否为新提示 (如果未明确指定isNew，则根据创建时间判断7天内的为新提示)
+    // Determine whether this is a new prompt (if isNew isn't explicitly set, treat anything created within 7 days as new)
     const isCreatedRecently = differenceInDays(new Date(), new Date(createdAt)) <= 7;
     const isNew = explicitIsNew !== undefined ? explicitIsNew : isCreatedRecently;
 
@@ -59,16 +58,16 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onDelete, isNew: explic
                         </div>
                     </div>
 
-                    {/* 标签 */}
+                    {/* Badges */}
                     <div className="flex space-x-2">
                         {isNew && (
                             <span className="px-2 py-1 text-xs font-medium text-white bg-apple-green rounded-full">
-                                新增
+                                New
                             </span>
                         )}
                         {featured && (
                             <span className="px-2 py-1 text-xs font-medium text-white bg-apple-purple rounded-full">
-                                精选
+                                Featured
                             </span>
                         )}
                     </div>
@@ -83,14 +82,14 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onDelete, isNew: explic
                         href={`/prompts/${slug}`}
                         className="text-sm font-medium text-apple-blue hover:underline"
                     >
-                        查看详情
+                        View Details
                     </Link>
 
                     <div className="flex space-x-3">
                         <Link
                             href={`/prompts/${slug}/edit`}
                             className="text-apple-darkGray hover:text-apple-blue transition-colors"
-                            title="编辑"
+                            title="Edit"
                         >
                             <PencilIcon className="w-5 h-5" />
                         </Link>
@@ -99,7 +98,7 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onDelete, isNew: explic
                             <button
                                 onClick={() => onDelete(slug)}
                                 className="text-apple-darkGray hover:text-apple-red transition-colors"
-                                title="删除"
+                                title="Delete"
                             >
                                 <TrashIcon className="w-5 h-5" />
                             </button>

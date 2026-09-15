@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: PromptPageProps): Promise<Met
 
   if (!prompt) {
     return {
-      title: '提示词未找到 - Prompt Library',
+      title: 'Prompt Not Found - Prompt Library',
     };
   }
 

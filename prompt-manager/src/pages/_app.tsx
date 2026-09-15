@@ -8,7 +8,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <>
             <Head>
                 <title>Prompt Manager</title>
-                <meta name="description" content="管理AI提示库的本地工具" />
+                <meta name="description" content="Local tool for managing the AI prompt library" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>

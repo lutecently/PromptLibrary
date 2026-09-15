@@ -35,13 +35,13 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
   if (!category) {
     return {
-      title: '分类未找到 - Prompt Library',
+      title: 'Category Not Found - Prompt Library',
     };
   }
 
   return {
     title: `${category.name} - Prompt Library`,
-    description: `浏览${category.name}分类下的AI提示词集合，帮助您提升${category.name}相关任务的效率`,
+    description: `Browse the AI prompt collection in the ${category.name} category to boost your productivity on related tasks`,
   };
 }
 

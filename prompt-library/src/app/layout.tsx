@@ -6,8 +6,8 @@ import Script from 'next/script'
 import { LanguageProvider } from '@/context/LanguageContext'
 
 export const metadata: Metadata = {
-  title: 'Prompt Library - 探索AI提示的艺术',
-  description: '探索、使用并分享经过精心策划的提示词库，释放AI的全部潜力',
+  title: 'Prompt Library - Explore the Art of AI Prompting',
+  description: 'Discover, use, and share a curated collection of prompts to unleash the full potential of AI',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover',
 }
 

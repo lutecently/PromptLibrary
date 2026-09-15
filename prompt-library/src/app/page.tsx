@@ -47,37 +47,37 @@ const HomeContent = dynamic(() => import('@/components/HomeContent'), {
 });
 
 export const metadata: Metadata = {
-  title: 'Prompt Library - AI提示词库',
-  description: '发现和使用高质量的AI提示词集合，提升您与人工智能的交互效率',
+  title: 'Prompt Library - AI Prompt Collection',
+  description: 'Discover and use a curated collection of high-quality AI prompts to boost your productivity with AI',
 };
 
-// 备用示例数据，在构建时无法读取文件系统时使用
+// Fallback sample data, used when the file system can't be read at build time
 const fallbackPrompts: PromptData[] = [
   {
     slug: 'professional-article-generator',
-    title: '专业文章生成器',
-    description: '创建结构化、专业的文章，包含引人入胜的标题、精确的小标题和丰富的内容。',
-    category: '内容创作',
+    title: 'Professional Article Generator',
+    description: 'Create structured, professional articles with engaging headlines, precise subheadings, and rich content.',
+    category: 'Content Creation',
     rating: 9.8,
     createdAt: '2023-01-15',
     featured: true
   },
   {
     slug: 'code-optimization-assistant',
-    title: '代码优化助手',
-    description: '分析并优化您的代码，提供性能改进建议和最佳实践指导。',
-    category: '编程开发',
+    title: 'Code Optimization Assistant',
+    description: 'Analyze and optimize your code, with performance improvement suggestions and best-practice guidance.',
+    category: 'Programming',
     rating: 9.5,
     createdAt: '2023-01-20',
     featured: true
   }
 ];
 
-// 添加静态生成标志
-export const revalidate = 3600; // 每小时重新生成一次页面
+// Static generation flag
+export const revalidate = 3600; // Regenerate the page once per hour
 
 export default function Home() {
-  // 获取数据（带错误处理）
+  // Fetch data (with error handling)
   let featuredPrompts: PromptData[] = [];
   let recentPrompts: PromptData[] = [];
 
@@ -87,7 +87,7 @@ export default function Home() {
       featuredPrompts = fallbackPrompts;
     }
   } catch (error) {
-    console.error('获取热门提示词时出错:', error);
+    console.error('Error fetching featured prompts:', error);
     featuredPrompts = fallbackPrompts;
   }
 
@@ -97,7 +97,7 @@ export default function Home() {
       recentPrompts = fallbackPrompts;
     }
   } catch (error) {
-    console.error('获取最新提示词时出错:', error);
+    console.error('Error fetching recent prompts:', error);
     recentPrompts = fallbackPrompts;
   }
 

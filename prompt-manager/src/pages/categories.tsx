@@ -26,18 +26,18 @@ export default function Categories() {
     const [promptsCount, setPromptsCount] = useState<Record<string, number>>({});
     const [error, setError] = useState<string | null>(null);
 
-    // 加载数据
+    // Load data
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // 获取所有分类
+                // Fetch all categories
                 const allCategories = await getAllCategories();
                 setCategories(allCategories);
 
-                // 获取所有提示以计算每个分类的提示数量
+                // Fetch all prompts to count how many belong to each category
                 const allPrompts = await getAllPrompts();
 
-                // 统计每个分类的提示数量
+                // Tally the prompt count per category
                 const counts: Record<string, number> = {};
 
                 allPrompts.forEach(prompt => {
@@ -47,8 +47,8 @@ export default function Categories() {
 
                 setPromptsCount(counts);
             } catch (error) {
-                console.error('获取数据时出错:', error);
-                setError('加载分类数据失败');
+                console.error('Error fetching data:', error);
+                setError('Failed to load category data');
             } finally {
                 setIsLoading(false);
             }
@@ -57,17 +57,17 @@ export default function Categories() {
         fetchData();
     }, []);
 
-    // 处理添加分类
+    // Handle adding a category
     const handleAddCategory = async () => {
         if (!newCategoryName.trim() || !newCategorySlug.trim()) {
-            setError('分类名称和标识不能为空');
+            setError('Category name and slug cannot be empty');
             return;
         }
 
         try {
-            // 检查slug是否已存在
+            // Check whether the slug already exists
             if (categories.some(c => c.slug === newCategorySlug)) {
-                setError('分类标识已存在');
+                setError('This category slug already exists');
                 return;
             }
 
@@ -78,29 +78,29 @@ export default function Categories() {
             });
 
             if (success) {
-                // 重新加载分类
+                // Reload categories
                 const updatedCategories = await getAllCategories();
                 setCategories(updatedCategories);
 
-                // 重置表单
+                // Reset the form
                 setNewCategoryName('');
                 setNewCategorySlug('');
                 setNewCategoryIcon('fa-tag');
                 setIsAdding(false);
                 setError(null);
             } else {
-                setError('添加分类失败');
+                setError('Failed to add category');
             }
         } catch (error) {
-            console.error('添加分类时出错:', error);
-            setError('添加分类时出错');
+            console.error('Error adding category:', error);
+            setError('Error adding category');
         }
     };
 
-    // 处理更新分类
+    // Handle updating a category
     const handleUpdateCategory = async (slug: string) => {
         if (!newCategoryName.trim()) {
-            setError('分类名称不能为空');
+            setError('Category name cannot be empty');
             return;
         }
 
@@ -111,35 +111,35 @@ export default function Categories() {
             });
 
             if (success) {
-                // 重新加载分类
+                // Reload categories
                 const updatedCategories = await getAllCategories();
                 setCategories(updatedCategories);
 
-                // 重置表单
+                // Reset the form
                 setEditingId(null);
                 setNewCategoryName('');
                 setNewCategoryIcon('');
                 setError(null);
             } else {
-                setError('更新分类失败');
+                setError('Failed to update category');
             }
         } catch (error) {
-            console.error('更新分类时出错:', error);
-            setError('更新分类时出错');
+            console.error('Error updating category:', error);
+            setError('Error updating category');
         }
     };
 
-    // 处理删除分类
+    // Handle deleting a category
     const handleDeleteCategory = async (slug: string, name: string) => {
         const categoryName = categories.find(c => c.slug === slug)?.name;
         const promptCount = promptsCount[categoryName || ''] || 0;
 
         if (promptCount > 0) {
-            if (!confirm(`该分类下有 ${promptCount} 个提示，删除分类会导致这些提示缺少分类信息。确定要删除吗？`)) {
+            if (!confirm(`This category has ${promptCount} prompt(s). Deleting it will leave those prompts without a category. Delete anyway?`)) {
                 return;
             }
         } else {
-            if (!confirm(`确定要删除分类 "${name}" 吗？`)) {
+            if (!confirm(`Are you sure you want to delete the category "${name}"?`)) {
                 return;
             }
         }
@@ -148,25 +148,25 @@ export default function Categories() {
             const success = await deleteCategory(slug);
 
             if (success) {
-                // 从列表中移除已删除的分类
+                // Remove the deleted category from the list
                 setCategories(categories.filter(c => c.slug !== slug));
             } else {
-                setError('删除分类失败');
+                setError('Failed to delete category');
             }
         } catch (error) {
-            console.error('删除分类时出错:', error);
-            setError('删除分类时出错');
+            console.error('Error deleting category:', error);
+            setError('Error deleting category');
         }
     };
 
-    // 开始编辑分类
+    // Start editing a category
     const startEditing = (category: CategoryData) => {
         setEditingId(category.slug);
         setNewCategoryName(category.name);
         setNewCategoryIcon(category.icon);
     };
 
-    // 取消编辑或添加
+    // Cancel editing or adding
     const cancelAction = () => {
         setEditingId(null);
         setIsAdding(false);
@@ -176,11 +176,11 @@ export default function Categories() {
         setError(null);
     };
 
-    // 生成slug
+    // Generate a slug
     const handleNameChange = (name: string) => {
         setNewCategoryName(name);
         if (isAdding) {
-            // 自动生成slug
+            // Auto-generate the slug
             setNewCategorySlug(
                 name.toLowerCase()
                     .replace(/[^\w\s-]/g, '')
@@ -189,7 +189,7 @@ export default function Categories() {
         }
     };
 
-    // 加载状态
+    // Loading state
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -207,7 +207,7 @@ export default function Categories() {
     return (
         <div className="animate-fadeIn">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="title-apple">分类管理</h1>
+                <h1 className="title-apple">Category Management</h1>
 
                 {!isAdding && (
                     <button
@@ -215,7 +215,7 @@ export default function Categories() {
                         className="btn-apple-primary flex items-center"
                     >
                         <PlusIcon className="w-5 h-5 mr-1" />
-                        <span>新建分类</span>
+                        <span>New Category</span>
                     </button>
                 )}
             </div>
@@ -232,54 +232,54 @@ export default function Categories() {
                 </div>
             )}
 
-            {/* 添加分类表单 */}
+            {/* Add category form */}
             {isAdding && (
                 <div className="card-apple mb-6">
-                    <h2 className="text-lg font-semibold mb-4">新建分类</h2>
+                    <h2 className="text-lg font-semibold mb-4">New Category</h2>
 
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                分类名称
+                                Category Name
                             </label>
                             <input
                                 type="text"
                                 value={newCategoryName}
                                 onChange={(e) => handleNameChange(e.target.value)}
                                 className="input-apple"
-                                placeholder="输入分类名称"
+                                placeholder="Enter a category name"
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                分类标识
+                                Category Slug
                             </label>
                             <input
                                 type="text"
                                 value={newCategorySlug}
                                 onChange={(e) => setNewCategorySlug(e.target.value)}
                                 className="input-apple"
-                                placeholder="英文标识，例如: programming"
+                                placeholder="e.g. programming"
                             />
                             <p className="text-xs text-apple-darkGray mt-1">
-                                用于URL和内部引用的唯一标识符，只能包含小写字母、数字和连字符
+                                A unique identifier used in URLs and internal references — lowercase letters, numbers, and hyphens only
                             </p>
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                图标
+                                Icon
                             </label>
                             <input
                                 type="text"
                                 value={newCategoryIcon}
                                 onChange={(e) => setNewCategoryIcon(e.target.value)}
                                 className="input-apple"
-                                placeholder="Font Awesome图标类名，例如: fa-code"
+                                placeholder="Font Awesome icon class, e.g. fa-code"
                             />
                             <p className="text-xs text-apple-darkGray mt-1">
-                                使用Font Awesome图标类名，格式如"fa-code"
+                                Use a Font Awesome icon class name, e.g. "fa-code"
                             </p>
                         </div>
 
@@ -288,39 +288,39 @@ export default function Categories() {
                                 onClick={cancelAction}
                                 className="btn-apple-secondary"
                             >
-                                取消
+                                Cancel
                             </button>
                             <button
                                 onClick={handleAddCategory}
                                 className="btn-apple-primary"
                             >
-                                保存
+                                Save
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* 分类列表 */}
+            {/* Category list */}
             <div className="bg-white rounded-xl shadow-apple-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-apple-darkGray uppercase tracking-wider">
-                                    分类名称
+                                    Category Name
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-apple-darkGray uppercase tracking-wider">
-                                    标识
+                                    Slug
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-apple-darkGray uppercase tracking-wider">
-                                    图标
+                                    Icon
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-apple-darkGray uppercase tracking-wider">
-                                    提示数量
+                                    Prompt Count
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-apple-darkGray uppercase tracking-wider">
-                                    操作
+                                    Actions
                                 </th>
                             </tr>
                         </thead>
@@ -371,14 +371,14 @@ export default function Categories() {
                                                 <button
                                                     onClick={() => handleUpdateCategory(category.slug)}
                                                     className="text-apple-green hover:text-green-700"
-                                                    title="保存"
+                                                    title="Save"
                                                 >
                                                     <CheckIcon className="w-5 h-5" />
                                                 </button>
                                                 <button
                                                     onClick={cancelAction}
                                                     className="text-apple-red hover:text-red-700"
-                                                    title="取消"
+                                                    title="Cancel"
                                                 >
                                                     <XMarkIcon className="w-5 h-5" />
                                                 </button>
@@ -388,14 +388,14 @@ export default function Categories() {
                                                 <button
                                                     onClick={() => startEditing(category)}
                                                     className="text-apple-blue hover:text-blue-700"
-                                                    title="编辑"
+                                                    title="Edit"
                                                 >
                                                     <PencilIcon className="w-5 h-5" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteCategory(category.slug, category.name)}
                                                     className="text-apple-red hover:text-red-700"
-                                                    title="删除"
+                                                    title="Delete"
                                                 >
                                                     <TrashIcon className="w-5 h-5" />
                                                 </button>
@@ -408,7 +408,7 @@ export default function Categories() {
                             {categories.length === 0 && (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-10 text-center text-apple-darkGray">
-                                        暂无分类，点击"新建分类"按钮创建
+                                        No categories yet — click "New Category" to create one
                                     </td>
                                 </tr>
                             )}
@@ -418,4 +418,4 @@ export default function Categories() {
             </div>
         </div>
     );
-} 
+}

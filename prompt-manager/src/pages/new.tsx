@@ -21,25 +21,25 @@ export default function NewPrompt() {
     const [error, setError] = useState<string | null>(null);
     const [previewMode, setPreviewMode] = useState(false);
 
-    // 加载分类数据
+    // Load category data
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                // 使用API获取分类数据
+                // Fetch categories via API
                 const response = await fetch('/api/categories');
                 if (!response.ok) {
-                    throw new Error('获取分类API响应错误:' + response.status);
+                    throw new Error('Category API returned an error: ' + response.status);
                 }
                 const allCategories = await response.json();
                 setCategories(allCategories);
 
-                // 设置默认分类
+                // Set the default category
                 if (allCategories.length > 0) {
                     setCategory(allCategories[0].name);
                 }
             } catch (error) {
-                console.error('获取分类时出错:', error);
-                setError('无法加载分类数据');
+                console.error('Error fetching categories:', error);
+                setError('Failed to load category data');
             } finally {
                 setIsLoading(false);
             }
@@ -48,16 +48,16 @@ export default function NewPrompt() {
         fetchCategories();
     }, []);
 
-    // 处理创建提示
+    // Handle creating the prompt
     const handleCreatePrompt = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!title.trim() || !description.trim() || !content.trim() || !category) {
-            setError('请填写所有必填字段');
+            setError('Please fill in all required fields');
             return;
         }
 
-        // 准备创建的提示数据
+        // Prepare the prompt data to create
         const newPrompt: Omit<Prompt, 'slug'> & { customFileName?: string } = {
             title,
             description,
@@ -76,13 +76,13 @@ export default function NewPrompt() {
             author: ''
         };
 
-        // 如果用户提供了自定义文件名，则添加到数据中
+        // If the user provided a custom file name, include it
         if (fileName.trim()) {
             newPrompt.customFileName = fileName.trim();
         }
 
         try {
-            // 使用API创建提示
+            // Create the prompt via API
             const response = await fetch('/api/prompts', {
                 method: 'POST',
                 headers: {
@@ -93,98 +93,98 @@ export default function NewPrompt() {
 
             if (response.ok) {
                 const createdPrompt = await response.json();
-                // 成功创建，跳转到提示详情页
+                // Successfully created, navigate to the prompt detail page
                 router.push(`/prompts/${createdPrompt.slug}`);
             } else {
                 const errorData = await response.json();
-                setError(`创建提示失败: ${errorData.error || '未知错误'}`);
+                setError(`Failed to create prompt: ${errorData.error || 'Unknown error'}`);
             }
         } catch (error) {
-            console.error('创建提示时出错:', error);
-            setError('创建提示时出错');
+            console.error('Error creating prompt:', error);
+            setError('Error creating prompt');
         }
     };
 
-    // 生成默认模板
+    // Generate a default template
     const generateTemplate = (templateType: string) => {
         if (templateType === 'simple') {
-            setContent(`# 提示标题
+            setContent(`# Prompt Title
 
-## 使用场景
+## Use Case
 
-在这里描述这个提示的使用场景。
+Describe the use case for this prompt here.
 
-## 提示内容
+## Prompt Content
 
-在这里编写您的主要提示内容。请详细说明任务、要求和期望的输出。
+Write your main prompt content here. Explain the task, requirements, and expected output in detail.
 
-## 示例输入
+## Example Input
 
-提供一个示例输入，展示如何使用这个提示。
+Provide an example input showing how to use this prompt.
 
-## 示例输出
+## Example Output
 
-提供一个示例输出，展示这个提示预期的结果。`);
+Provide an example output showing the expected result of this prompt.`);
         } else if (templateType === 'detailed') {
-            setContent(`# 提示标题
+            setContent(`# Prompt Title
 
-## 角色设定
+## Role
 
-您是一位专业的[角色描述]，具有[相关专业知识/技能]。
+You are a professional [role description] with expertise in [relevant knowledge/skills].
 
-## 任务背景
+## Task Background
 
-[提供任务背景和上下文]
+[Provide task background and context]
 
-## 详细指令
+## Detailed Instructions
 
-1. 首先，您需要[第一步指令]
-2. 然后，[第二步指令]
-3. 接着，[第三步指令]
-4. 最后，[最后步骤]
+1. First, you need to [first step]
+2. Then, [second step]
+3. Next, [third step]
+4. Finally, [last step]
 
-## 输出格式
+## Output Format
 
-请按照以下格式提供您的回复：
+Please provide your response in the following format:
 
-- 部分一：[描述]
-- 部分二：[描述]
-- 部分三：[描述]
+- Part one: [description]
+- Part two: [description]
+- Part three: [description]
 
-## 约束条件
+## Constraints
 
-- 限制一：[描述限制]
-- 限制二：[描述限制]
+- Constraint one: [description]
+- Constraint two: [description]
 
-## 示例
+## Example
 
-示例输入：
+Example input:
 \`\`\`
-[示例输入内容]
-\`\`\`
-
-示例输出：
-\`\`\`
-[示例输出内容]
+[example input content]
 \`\`\`
 
-## 附加信息
+Example output:
+\`\`\`
+[example output content]
+\`\`\`
 
-[任何其他相关信息或资源]`);
+## Additional Information
+
+[Any other relevant information or resources]`);
         }
     };
 
-    // 预览模式的内容
+    // Preview mode content
     const previewContent = () => {
         return (
             <div className="prose max-w-none bg-white rounded-xl p-6 shadow-apple-sm">
-                <h1>{title || '提示标题'}</h1>
-                <p className="text-apple-darkGray">{description || '提示描述'}</p>
+                <h1>{title || 'Prompt Title'}</h1>
+                <p className="text-apple-darkGray">{description || 'Prompt description'}</p>
                 <hr className="my-4" />
                 {content ? (
                     <div dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br>') }} />
                 ) : (
-                    <p className="text-apple-darkGray">未填写提示内容</p>
+                    <p className="text-apple-darkGray">No prompt content yet</p>
                 )}
             </div>
         );
@@ -192,7 +192,7 @@ export default function NewPrompt() {
 
     return (
         <div className="animate-fadeIn">
-            {/* 返回按钮和标题 */}
+            {/* Back button and title */}
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center">
                     <Link
@@ -200,9 +200,9 @@ export default function NewPrompt() {
                         className="inline-flex items-center text-apple-darkGray hover:text-apple-blue transition-colors mr-4"
                     >
                         <ArrowLeftIcon className="w-4 h-4 mr-1" />
-                        <span>返回</span>
+                        <span>Back</span>
                     </Link>
-                    <h1 className="title-apple">创建新提示</h1>
+                    <h1 className="title-apple">Create New Prompt</h1>
                 </div>
 
                 <button
@@ -210,7 +210,7 @@ export default function NewPrompt() {
                     className="flex items-center btn-apple-secondary"
                 >
                     <PencilIcon className="w-5 h-5 mr-1" />
-                    <span>{previewMode ? '编辑模式' : '预览模式'}</span>
+                    <span>{previewMode ? 'Edit Mode' : 'Preview Mode'}</span>
                 </button>
             </div>
 
@@ -224,58 +224,58 @@ export default function NewPrompt() {
                 <form onSubmit={handleCreatePrompt} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="col-span-2 space-y-6">
-                            {/* 基本信息 */}
+                            {/* Basic information */}
                             <div className="card-apple">
-                                <h2 className="text-lg font-semibold mb-4">基本信息</h2>
+                                <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
 
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                            标题 <span className="text-apple-red">*</span>
+                                            Title <span className="text-apple-red">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={title}
                                             onChange={(e) => setTitle(e.target.value)}
                                             className="input-apple"
-                                            placeholder="提示的标题"
+                                            placeholder="The prompt's title"
                                             required
                                         />
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                            描述 <span className="text-apple-red">*</span>
+                                            Description <span className="text-apple-red">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
                                             className="input-apple"
-                                            placeholder="简短描述提示的用途和功能"
+                                            placeholder="A brief description of what this prompt does"
                                             required
                                         />
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                            自定义文件名
+                                            Custom File Name
                                         </label>
                                         <input
                                             type="text"
                                             value={fileName}
                                             onChange={(e) => setFileName(e.target.value)}
                                             className="input-apple"
-                                            placeholder="可选，如不填写将自动生成"
+                                            placeholder="Optional, will be auto-generated if left blank"
                                         />
                                         <p className="text-xs text-apple-darkGray mt-1">
-                                            仅使用字母、数字、连字符和下划线，不需要包含扩展名
+                                            Letters, numbers, hyphens, and underscores only — no file extension needed
                                         </p>
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                            分类 <span className="text-apple-red">*</span>
+                                            Category <span className="text-apple-red">*</span>
                                         </label>
                                         <select
                                             value={category}
@@ -290,26 +290,26 @@ export default function NewPrompt() {
                                                     </option>
                                                 ))
                                             ) : (
-                                                <option value="">暂无分类</option>
+                                                <option value="">No categories yet</option>
                                             )}
                                         </select>
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                            配图URL
+                                            Image URL
                                         </label>
                                         <input
                                             type="text"
                                             value={image}
                                             onChange={(e) => setImage(e.target.value)}
                                             className="input-apple"
-                                            placeholder="可选，图片的完整URL地址"
+                                            placeholder="Optional, the full URL of an image"
                                         />
                                         {image && (
                                             <img
                                                 src={image}
-                                                alt="配图预览"
+                                                alt="Image preview"
                                                 className="mt-2 rounded-lg max-h-40 object-cover"
                                             />
                                         )}
@@ -317,24 +317,24 @@ export default function NewPrompt() {
                                 </div>
                             </div>
 
-                            {/* 提示内容 */}
+                            {/* Prompt content */}
                             <div className="card-apple">
                                 <div className="flex justify-between items-center mb-4">
-                                    <h2 className="text-lg font-semibold">提示内容 <span className="text-apple-red">*</span></h2>
+                                    <h2 className="text-lg font-semibold">Prompt Content <span className="text-apple-red">*</span></h2>
                                     <div className="flex space-x-2">
                                         <button
                                             type="button"
                                             onClick={() => generateTemplate('simple')}
                                             className="text-sm text-apple-blue hover:underline"
                                         >
-                                            使用简单模板
+                                            Use Simple Template
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => generateTemplate('detailed')}
                                             className="text-sm text-apple-blue hover:underline"
                                         >
-                                            使用详细模板
+                                            Use Detailed Template
                                         </button>
                                     </div>
                                 </div>
@@ -343,20 +343,20 @@ export default function NewPrompt() {
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
                                     className="input-apple min-h-[400px] font-mono"
-                                    placeholder="在此处编写提示内容（支持Markdown格式）"
+                                    placeholder="Write the prompt content here (Markdown supported)"
                                     required
                                 />
                             </div>
                         </div>
 
-                        {/* 设置 */}
+                        {/* Settings */}
                         <div className="card-apple">
-                            <h2 className="text-lg font-semibold mb-4">提示设置</h2>
+                            <h2 className="text-lg font-semibold mb-4">Prompt Settings</h2>
 
                             <div className="space-y-6">
                                 <div>
                                     <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                        评分（1-10）
+                                        Rating (1-10)
                                     </label>
                                     <div className="flex items-center space-x-2">
                                         <input
@@ -384,7 +384,7 @@ export default function NewPrompt() {
                                             className="w-4 h-4 text-apple-blue focus:ring-apple-blue border-gray-300 rounded"
                                         />
                                         <label htmlFor="featured" className="ml-2 text-sm font-medium text-apple-black">
-                                            设为精选提示
+                                            Mark as featured prompt
                                         </label>
                                     </div>
 
@@ -397,7 +397,7 @@ export default function NewPrompt() {
                                             className="w-4 h-4 text-apple-blue focus:ring-apple-blue border-gray-300 rounded"
                                         />
                                         <label htmlFor="isNew" className="ml-2 text-sm font-medium text-apple-black">
-                                            标记为新提示
+                                            Mark as new prompt
                                         </label>
                                     </div>
                                 </div>
@@ -407,7 +407,7 @@ export default function NewPrompt() {
                                         type="submit"
                                         className="w-full btn-apple-primary"
                                     >
-                                        创建提示
+                                        Create Prompt
                                     </button>
                                 </div>
                             </div>
@@ -419,28 +419,28 @@ export default function NewPrompt() {
                     <div className="bg-white rounded-xl shadow-apple-sm p-4 mb-6">
                         <div className="flex space-x-4">
                             <div className="px-3 py-1 rounded-full bg-gray-100 text-apple-darkGray text-sm">
-                                {category || '未选择分类'}
+                                {category || 'No category selected'}
                             </div>
 
                             <div className="px-3 py-1 rounded-full bg-gray-100 text-apple-darkGray text-sm">
-                                评分：{rating.toFixed(1)}
+                                Rating: {rating.toFixed(1)}
                             </div>
 
                             {featured && (
                                 <div className="px-3 py-1 rounded-full bg-apple-purple text-white text-sm">
-                                    精选
+                                    Featured
                                 </div>
                             )}
 
                             {isNew && (
                                 <div className="px-3 py-1 rounded-full bg-apple-green text-white text-sm">
-                                    新增
+                                    New
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {/* 预览内容 */}
+                    {/* Preview content */}
                     {previewContent()}
 
                     <div className="flex justify-end">
@@ -448,11 +448,11 @@ export default function NewPrompt() {
                             onClick={handleCreatePrompt}
                             className="btn-apple-primary"
                         >
-                            创建提示
+                            Create Prompt
                         </button>
                     </div>
                 </div>
             )}
         </div>
     );
-} 
+}

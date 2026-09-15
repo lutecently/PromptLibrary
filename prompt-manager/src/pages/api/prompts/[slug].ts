@@ -4,92 +4,92 @@ import { getPromptBySlug, updatePrompt, deletePrompt } from '@/lib/promptUtils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { slug } = req.query;
-  
-  console.log(`API请求单个提示 - slug: ${slug}, 方法: ${req.method}, 时间: ${new Date().toISOString()}`);
-  
+
+  console.log(`API request for a single prompt - slug: ${slug}, method: ${req.method}, time: ${new Date().toISOString()}`);
+
   if (!slug || typeof slug !== 'string') {
-    console.error('无效的slug参数:', slug);
-    return res.status(400).json({ error: '无效的提示标识' });
+    console.error('Invalid slug parameter:', slug);
+    return res.status(400).json({ error: 'Invalid prompt identifier' });
   }
-  
-  // 获取提示
+
+  // Fetch the prompt
   if (req.method === 'GET') {
     try {
-      console.log(`尝试获取提示: ${slug}`);
+      console.log(`Attempting to fetch prompt: ${slug}`);
       const prompt = getPromptBySlug(slug);
-      
+
       if (!prompt) {
-        console.error(`找不到slug为${slug}的提示`);
-        return res.status(404).json({ error: `找不到slug为${slug}的提示` });
+        console.error(`No prompt found with slug ${slug}`);
+        return res.status(404).json({ error: `No prompt found with slug ${slug}` });
       }
-      
-      console.log(`成功获取提示: ${prompt.title}`);
+
+      console.log(`Successfully fetched prompt: ${prompt.title}`);
       return res.status(200).json(prompt);
     } catch (error) {
-      console.error(`API获取提示 ${slug} 出错:`, error);
-      return res.status(500).json({ error: '获取提示失败' });
+      console.error(`API error fetching prompt ${slug}:`, error);
+      return res.status(500).json({ error: 'Failed to fetch prompt' });
     }
   }
-  
-  // 更新提示
+
+  // Update the prompt
   else if (req.method === 'PUT') {
     try {
       const promptData = req.body;
-      
+
       if (!promptData) {
-        return res.status(400).json({ error: '缺少更新数据' });
+        return res.status(400).json({ error: 'Missing update data' });
       }
-      
-      // 检查提示是否存在
+
+      // Check whether the prompt exists
       const existingPrompt = getPromptBySlug(slug);
       if (!existingPrompt) {
-        return res.status(404).json({ error: `找不到slug为${slug}的提示` });
+        return res.status(404).json({ error: `No prompt found with slug ${slug}` });
       }
-      
-      // 更新提示
+
+      // Update the prompt
       const success = updatePrompt(slug, promptData);
-      
+
       if (success) {
         const updatedPrompt = getPromptBySlug(slug);
-        return res.status(200).json({ 
-          message: '提示更新成功',
+        return res.status(200).json({
+          message: 'Prompt updated successfully',
           prompt: updatedPrompt
         });
       } else {
-        return res.status(500).json({ error: '保存提示失败' });
+        return res.status(500).json({ error: 'Failed to save prompt' });
       }
     } catch (error) {
-      console.error(`API更新提示 ${slug} 出错:`, error);
-      return res.status(500).json({ error: '更新提示失败' });
+      console.error(`API error updating prompt ${slug}:`, error);
+      return res.status(500).json({ error: 'Failed to update prompt' });
     }
   }
-  
-  // 删除提示
+
+  // Delete the prompt
   else if (req.method === 'DELETE') {
     try {
-      // 检查提示是否存在
+      // Check whether the prompt exists
       const existingPrompt = getPromptBySlug(slug);
       if (!existingPrompt) {
-        return res.status(404).json({ error: `找不到slug为${slug}的提示` });
+        return res.status(404).json({ error: `No prompt found with slug ${slug}` });
       }
-      
-      // 删除提示文件
+
+      // Delete the prompt files
       const success = deletePrompt(slug);
-      
+
       if (success) {
-        return res.status(200).json({ message: '提示删除成功' });
+        return res.status(200).json({ message: 'Prompt deleted successfully' });
       } else {
-        return res.status(500).json({ error: '删除提示失败' });
+        return res.status(500).json({ error: 'Failed to delete prompt' });
       }
     } catch (error) {
-      console.error(`API删除提示 ${slug} 出错:`, error);
-      return res.status(500).json({ error: '删除提示失败' });
+      console.error(`API error deleting prompt ${slug}:`, error);
+      return res.status(500).json({ error: 'Failed to delete prompt' });
     }
   }
-  
-  // 方法不允许
+
+  // Method not allowed
   else {
     res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-} 
+}

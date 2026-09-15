@@ -4,81 +4,81 @@ import { getAllCategories, updateCategory, deleteCategory } from '@/lib/category
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { slug } = req.query;
-  
+
   if (!slug || typeof slug !== 'string') {
-    return res.status(400).json({ error: '无效的分类标识' });
+    return res.status(400).json({ error: 'Invalid category identifier' });
   }
-  
-  // 获取分类
+
+  // Fetch the category
   if (req.method === 'GET') {
     try {
-      // 获取所有分类
+      // Fetch all categories
       const categories = getAllCategories();
-      
-      // 查找指定的分类
+
+      // Find the requested category
       const category = categories.find(cat => cat.slug === slug);
-      
+
       if (!category) {
-        return res.status(404).json({ error: `找不到slug为${slug}的分类` });
+        return res.status(404).json({ error: `No category found with slug ${slug}` });
       }
-      
+
       return res.status(200).json(category);
     } catch (error) {
-      console.error(`API获取分类 ${slug} 出错:`, error);
-      return res.status(500).json({ error: '获取分类失败' });
+      console.error(`API error fetching category ${slug}:`, error);
+      return res.status(500).json({ error: 'Failed to fetch category' });
     }
   }
-  
-  // 更新分类
+
+  // Update the category
   else if (req.method === 'PATCH') {
     try {
       const categoryData = req.body;
-      
+
       if (!categoryData) {
-        return res.status(400).json({ error: '缺少更新数据' });
+        return res.status(400).json({ error: 'Missing update data' });
       }
-      
-      // 更新分类
+
+      // Update the category
       const success = updateCategory(slug, categoryData);
-      
+
       if (success) {
-        // 获取更新后的分类
+        // Fetch the updated category
         const categories = getAllCategories();
         const updatedCategory = categories.find(cat => cat.slug === slug);
-        
-        return res.status(200).json({ 
-          message: '分类更新成功',
+
+        return res.status(200).json({
+          message: 'Category updated successfully',
           category: updatedCategory
         });
       } else {
-        return res.status(500).json({ error: '更新分类失败' });
+        return res.status(500).json({ error: 'Failed to update category' });
       }
     } catch (error) {
-      console.error(`API更新分类 ${slug} 出错:`, error);
-      return res.status(500).json({ error: '更新分类失败' });
+      console.error(`API error updating category ${slug}:`, error);
+      return res.status(500).json({ error: 'Failed to update category' });
     }
   }
-  
-  // 删除分类
+
+  // Delete the category
   else if (req.method === 'DELETE') {
     try {
-      // 删除分类
+      // Delete the category
       const success = deleteCategory(slug);
-      
+
       if (success) {
-        return res.status(200).json({ message: '分类删除成功' });
+        return res.status(200).json({ message: 'Category deleted successfully' });
       } else {
-        return res.status(404).json({ error: `找不到slug为${slug}的分类` });
+        return res.status(404).json({ error: `No category found with slug ${slug}` });
       }
     } catch (error) {
-      console.error(`API删除分类 ${slug} 出错:`, error);
-      return res.status(500).json({ error: '删除分类失败' });
+      console.error(`API error deleting category ${slug}:`, error);
+      return res.status(500).json({ error: 'Failed to delete category' });
     }
   }
-  
-  // 方法不允许
+
+  // Method not allowed
   else {
     res.setHeader('Allow', ['GET', 'PATCH', 'DELETE']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-} 
+}

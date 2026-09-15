@@ -13,7 +13,6 @@ import {
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import { Prompt } from '@/types';
 
 export default function PromptDetail() {
@@ -35,11 +34,11 @@ export default function PromptDetail() {
                     const promptData = await response.json();
                     setPrompt(promptData);
                 } else {
-                    console.error('获取提示API响应错误:', response.status);
+                    console.error('Prompt API returned an error:', response.status);
                     setPrompt(null);
                 }
             } catch (error) {
-                console.error('获取提示时出错:', error);
+                console.error('Error fetching prompt:', error);
                 setPrompt(null);
             } finally {
                 setIsLoading(false);
@@ -71,10 +70,10 @@ export default function PromptDetail() {
             if (response.ok) {
                 router.push('/prompts');
             } else {
-                console.error('删除提示API响应错误:', response.status);
+                console.error('Delete prompt API returned an error:', response.status);
             }
         } catch (error) {
-            console.error('删除提示时出错:', error);
+            console.error('Error deleting prompt:', error);
         }
     };
 
@@ -95,10 +94,10 @@ export default function PromptDetail() {
     if (!prompt) {
         return (
             <div className="card-apple text-center">
-                <h2 className="title-apple mb-4">未找到提示</h2>
-                <p className="text-apple-darkGray mb-6">无法找到指定的提示内容</p>
+                <h2 className="title-apple mb-4">Prompt Not Found</h2>
+                <p className="text-apple-darkGray mb-6">Could not find the requested prompt</p>
                 <Link href="/prompts" className="btn-apple-primary">
-                    返回提示列表
+                    Back to Prompts
                 </Link>
             </div>
         );
@@ -115,23 +114,23 @@ export default function PromptDetail() {
         isNew
     } = prompt;
 
-    // 格式化日期
-    const formattedDate = format(new Date(createdAt), 'yyyy年MM月dd日', { locale: zhCN });
+    // Format the date
+    const formattedDate = format(new Date(createdAt), 'MMM d, yyyy');
 
     return (
         <div className="animate-fadeIn">
-            {/* 返回按钮 */}
+            {/* Back button */}
             <div className="mb-6">
                 <Link
                     href="/prompts"
                     className="inline-flex items-center text-apple-darkGray hover:text-apple-blue transition-colors"
                 >
                     <ArrowLeftIcon className="w-4 h-4 mr-1" />
-                    <span>返回提示列表</span>
+                    <span>Back to Prompts</span>
                 </Link>
             </div>
 
-            {/* 顶部信息 */}
+            {/* Header info */}
             <div className="card-apple mb-6">
                 <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
                     <div>
@@ -143,19 +142,19 @@ export default function PromptDetail() {
                         <Link
                             href={`/prompts/${slug}/edit`}
                             className="btn-apple-secondary flex items-center"
-                            title="编辑"
+                            title="Edit"
                         >
                             <PencilIcon className="w-5 h-5 mr-1" />
-                            <span>编辑</span>
+                            <span>Edit</span>
                         </Link>
 
                         <button
                             onClick={() => setDeleteConfirm(true)}
                             className="flex items-center px-5 py-2 rounded-full bg-white text-apple-red border border-apple-red hover:bg-apple-red hover:bg-opacity-5 transition-all"
-                            title="删除"
+                            title="Delete"
                         >
                             <TrashIcon className="w-5 h-5 mr-1" />
-                            <span>删除</span>
+                            <span>Delete</span>
                         </button>
                     </div>
                 </div>
@@ -178,13 +177,13 @@ export default function PromptDetail() {
 
                     {featured && (
                         <span className="px-3 py-1 text-sm font-medium text-white bg-apple-purple rounded-full">
-                            精选
+                            Featured
                         </span>
                     )}
 
                     {isNew && (
                         <span className="px-3 py-1 text-sm font-medium text-white bg-apple-green rounded-full">
-                            新增
+                            New
                         </span>
                     )}
                 </div>
@@ -193,7 +192,7 @@ export default function PromptDetail() {
                     <button
                         onClick={handleCopyContent}
                         className="absolute top-0 right-0 p-2 text-apple-darkGray hover:text-apple-blue transition-colors"
-                        title={isCopied ? '已复制' : '复制内容'}
+                        title={isCopied ? 'Copied' : 'Copy content'}
                     >
                         {isCopied ? (
                             <ClipboardDocumentCheckIcon className="w-6 h-6" />
@@ -210,26 +209,26 @@ export default function PromptDetail() {
                 </div>
             </div>
 
-            {/* 删除确认对话框 */}
+            {/* Delete confirmation dialog */}
             {deleteConfirm && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-                        <h2 className="text-xl font-semibold text-apple-black mb-4">确认删除</h2>
+                        <h2 className="text-xl font-semibold text-apple-black mb-4">Confirm Deletion</h2>
                         <p className="text-apple-darkGray mb-6">
-                            您确定要删除提示 "{title}" 吗？此操作无法撤销。
+                            Are you sure you want to delete the prompt "{title}"? This cannot be undone.
                         </p>
                         <div className="flex justify-end space-x-4">
                             <button
                                 onClick={() => setDeleteConfirm(false)}
                                 className="btn-apple-secondary"
                             >
-                                取消
+                                Cancel
                             </button>
                             <button
                                 onClick={handleDelete}
                                 className="px-5 py-2 rounded-full bg-apple-red text-white font-medium hover:bg-opacity-90 transition-all"
                             >
-                                确认删除
+                                Confirm Delete
                             </button>
                         </div>
                     </div>
@@ -237,4 +236,4 @@ export default function PromptDetail() {
             )}
         </div>
     );
-} 
+}

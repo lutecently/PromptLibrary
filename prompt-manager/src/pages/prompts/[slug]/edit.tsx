@@ -23,18 +23,18 @@ export default function EditPrompt() {
     const [error, setError] = useState<string | null>(null);
     const [previewMode, setPreviewMode] = useState(false);
 
-    // 加载提示和分类数据
+    // Load the prompt and category data
     useEffect(() => {
         if (!slug) return;
 
         const fetchData = async () => {
             try {
-                // 获取提示数据 - 使用API
+                // Fetch the prompt data via API
                 const promptResponse = await fetch(`/api/prompts/${slug}`);
 
                 if (!promptResponse.ok) {
-                    console.error('获取提示API响应错误:', promptResponse.status);
-                    setError('未找到提示');
+                    console.error('Prompt API returned an error:', promptResponse.status);
+                    setError('Prompt not found');
                     setIsLoading(false);
                     return;
                 }
@@ -52,18 +52,18 @@ export default function EditPrompt() {
                 setCreatedAt(promptData.createdAt);
                 setRating(promptData.rating || 8.0);
 
-                // 获取分类数据 - 使用API
+                // Fetch category data via API
                 const categoriesResponse = await fetch('/api/categories');
 
                 if (categoriesResponse.ok) {
                     const allCategories = await categoriesResponse.json();
                     setCategories(allCategories);
                 } else {
-                    console.error('获取分类API响应错误:', categoriesResponse.status);
+                    console.error('Category API returned an error:', categoriesResponse.status);
                 }
             } catch (error) {
-                console.error('获取数据时出错:', error);
-                setError('加载数据失败');
+                console.error('Error fetching data:', error);
+                setError('Failed to load data');
             } finally {
                 setIsLoading(false);
             }
@@ -72,21 +72,21 @@ export default function EditPrompt() {
         fetchData();
     }, [slug]);
 
-    // 处理保存提示
+    // Handle saving the prompt
     const handleSavePrompt = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!title.trim() || !description.trim() || !content.trim() || !category) {
-            setError('请填写所有必填字段');
+            setError('Please fill in all required fields');
             return;
         }
 
         if (!prompt || !prompt.slug) {
-            setError('找不到要更新的提示');
+            setError('Could not find the prompt to update');
             return;
         }
 
-        // 准备更新的提示数据
+        // Prepare the updated prompt data
         const updatedPrompt: Prompt = {
             ...prompt,
             title,
@@ -100,7 +100,7 @@ export default function EditPrompt() {
         };
 
         try {
-            // 使用API更新提示
+            // Update the prompt via API
             const response = await fetch(`/api/prompts/${prompt.slug}`, {
                 method: 'PUT',
                 headers: {
@@ -110,35 +110,35 @@ export default function EditPrompt() {
             });
 
             if (response.ok) {
-                // 成功保存，跳转到提示详情页
+                // Successfully saved, navigate to the prompt detail page
                 router.push(`/prompts/${prompt.slug}`);
             } else {
-                console.error('保存提示API响应错误:', response.status);
-                setError('保存提示失败');
+                console.error('Save prompt API returned an error:', response.status);
+                setError('Failed to save prompt');
             }
         } catch (error) {
-            console.error('保存提示时出错:', error);
-            setError('保存提示时出错');
+            console.error('Error saving prompt:', error);
+            setError('Error saving prompt');
         }
     };
 
-    // 预览模式的内容
+    // Preview mode content
     const previewContent = () => {
         return (
             <div className="prose max-w-none bg-white rounded-xl p-6 shadow-apple-sm">
-                <h1>{title || '提示标题'}</h1>
-                <p className="text-apple-darkGray">{description || '提示描述'}</p>
+                <h1>{title || 'Prompt Title'}</h1>
+                <p className="text-apple-darkGray">{description || 'Prompt description'}</p>
                 <hr className="my-4" />
                 {content ? (
                     <div dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br>') }} />
                 ) : (
-                    <p className="text-apple-darkGray">未填写提示内容</p>
+                    <p className="text-apple-darkGray">No prompt content yet</p>
                 )}
             </div>
         );
     };
 
-    // 加载状态
+    // Loading state
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -153,14 +153,14 @@ export default function EditPrompt() {
         );
     }
 
-    // 提示不存在
+    // Prompt does not exist
     if (!prompt && !isLoading) {
         return (
             <div className="card-apple text-center py-10">
-                <h2 className="text-xl font-medium text-apple-black mb-2">未找到提示</h2>
-                <p className="text-apple-darkGray mb-6">无法找到要编辑的提示</p>
+                <h2 className="text-xl font-medium text-apple-black mb-2">Prompt Not Found</h2>
+                <p className="text-apple-darkGray mb-6">Could not find the prompt to edit</p>
                 <Link href="/prompts" className="btn-apple-primary">
-                    返回提示列表
+                    Back to Prompts
                 </Link>
             </div>
         );
@@ -168,7 +168,7 @@ export default function EditPrompt() {
 
     return (
         <div className="animate-fadeIn">
-            {/* 返回按钮和标题 */}
+            {/* Back button and title */}
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center">
                     <Link
@@ -176,9 +176,9 @@ export default function EditPrompt() {
                         className="inline-flex items-center text-apple-darkGray hover:text-apple-blue transition-colors mr-4"
                     >
                         <ArrowLeftIcon className="w-4 h-4 mr-1" />
-                        <span>返回</span>
+                        <span>Back</span>
                     </Link>
-                    <h1 className="title-apple">编辑提示</h1>
+                    <h1 className="title-apple">Edit Prompt</h1>
                 </div>
 
                 <button
@@ -186,7 +186,7 @@ export default function EditPrompt() {
                     className="flex items-center btn-apple-secondary"
                 >
                     <PencilIcon className="w-5 h-5 mr-1" />
-                    <span>{previewMode ? '编辑模式' : '预览模式'}</span>
+                    <span>{previewMode ? 'Edit Mode' : 'Preview Mode'}</span>
                 </button>
             </div>
 
@@ -200,42 +200,42 @@ export default function EditPrompt() {
                 <form onSubmit={handleSavePrompt} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="col-span-2 space-y-6">
-                            {/* 基本信息 */}
+                            {/* Basic information */}
                             <div className="card-apple">
-                                <h2 className="text-lg font-semibold mb-4">基本信息</h2>
+                                <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
 
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                            标题 <span className="text-apple-red">*</span>
+                                            Title <span className="text-apple-red">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={title}
                                             onChange={(e) => setTitle(e.target.value)}
                                             className="input-apple"
-                                            placeholder="提示的标题"
+                                            placeholder="The prompt's title"
                                             required
                                         />
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                            描述 <span className="text-apple-red">*</span>
+                                            Description <span className="text-apple-red">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
                                             className="input-apple"
-                                            placeholder="简短描述提示的用途和功能"
+                                            placeholder="A brief description of what this prompt does"
                                             required
                                         />
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                            分类 <span className="text-apple-red">*</span>
+                                            Category <span className="text-apple-red">*</span>
                                         </label>
                                         <select
                                             value={category}
@@ -250,26 +250,26 @@ export default function EditPrompt() {
                                                     </option>
                                                 ))
                                             ) : (
-                                                <option value="">暂无分类</option>
+                                                <option value="">No categories yet</option>
                                             )}
                                         </select>
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                            配图URL
+                                            Image URL
                                         </label>
                                         <input
                                             type="text"
                                             value={image}
                                             onChange={(e) => setImage(e.target.value)}
                                             className="input-apple"
-                                            placeholder="可选，图片的完整URL地址"
+                                            placeholder="Optional, the full URL of an image"
                                         />
                                         {image && (
                                             <img
                                                 src={image}
-                                                alt="配图预览"
+                                                alt="Image preview"
                                                 className="mt-2 rounded-lg max-h-40 object-cover"
                                             />
                                         )}
@@ -277,28 +277,28 @@ export default function EditPrompt() {
                                 </div>
                             </div>
 
-                            {/* 提示内容 */}
+                            {/* Prompt content */}
                             <div className="card-apple">
-                                <h2 className="text-lg font-semibold mb-4">提示内容 <span className="text-apple-red">*</span></h2>
+                                <h2 className="text-lg font-semibold mb-4">Prompt Content <span className="text-apple-red">*</span></h2>
 
                                 <textarea
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
                                     className="input-apple min-h-[400px] font-mono"
-                                    placeholder="在此处编写提示内容（支持Markdown格式）"
+                                    placeholder="Write the prompt content here (Markdown supported)"
                                     required
                                 />
                             </div>
                         </div>
 
-                        {/* 设置 */}
+                        {/* Settings */}
                         <div className="card-apple">
-                            <h2 className="text-lg font-semibold mb-4">提示设置</h2>
+                            <h2 className="text-lg font-semibold mb-4">Prompt Settings</h2>
 
                             <div className="space-y-6">
                                 <div>
                                     <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                        创建日期
+                                        Created Date
                                     </label>
                                     <input
                                         type="text"
@@ -307,13 +307,13 @@ export default function EditPrompt() {
                                         disabled
                                     />
                                     <p className="text-xs text-apple-darkGray mt-1">
-                                        创建日期不可更改
+                                        The created date cannot be changed
                                     </p>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-apple-darkGray mb-1">
-                                        评分（1-10）
+                                        Rating (1-10)
                                     </label>
                                     <div className="flex items-center space-x-2">
                                         <input
@@ -341,7 +341,7 @@ export default function EditPrompt() {
                                             className="w-4 h-4 text-apple-blue focus:ring-apple-blue border-gray-300 rounded"
                                         />
                                         <label htmlFor="featured" className="ml-2 text-sm font-medium text-apple-black">
-                                            设为精选提示
+                                            Mark as featured prompt
                                         </label>
                                     </div>
 
@@ -354,7 +354,7 @@ export default function EditPrompt() {
                                             className="w-4 h-4 text-apple-blue focus:ring-apple-blue border-gray-300 rounded"
                                         />
                                         <label htmlFor="isNew" className="ml-2 text-sm font-medium text-apple-black">
-                                            标记为新提示
+                                            Mark as new prompt
                                         </label>
                                     </div>
                                 </div>
@@ -364,7 +364,7 @@ export default function EditPrompt() {
                                         type="submit"
                                         className="w-full btn-apple-primary"
                                     >
-                                        保存更改
+                                        Save Changes
                                     </button>
                                 </div>
                             </div>
@@ -376,28 +376,28 @@ export default function EditPrompt() {
                     <div className="bg-white rounded-xl shadow-apple-sm p-4 mb-6">
                         <div className="flex space-x-4">
                             <div className="px-3 py-1 rounded-full bg-gray-100 text-apple-darkGray text-sm">
-                                {category || '未选择分类'}
+                                {category || 'No category selected'}
                             </div>
 
                             <div className="px-3 py-1 rounded-full bg-gray-100 text-apple-darkGray text-sm">
-                                评分：{rating.toFixed(1)}
+                                Rating: {rating.toFixed(1)}
                             </div>
 
                             {featured && (
                                 <div className="px-3 py-1 rounded-full bg-apple-purple text-white text-sm">
-                                    精选
+                                    Featured
                                 </div>
                             )}
 
                             {isNew && (
                                 <div className="px-3 py-1 rounded-full bg-apple-green text-white text-sm">
-                                    新增
+                                    New
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {/* 预览内容 */}
+                    {/* Preview content */}
                     {previewContent()}
 
                     <div className="flex justify-end">
@@ -405,11 +405,11 @@ export default function EditPrompt() {
                             onClick={handleSavePrompt}
                             className="btn-apple-primary"
                         >
-                            保存更改
+                            Save Changes
                         </button>
                     </div>
                 </div>
             )}
         </div>
     );
-} 
+}
