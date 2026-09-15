@@ -12,6 +12,7 @@ export interface PromptData {
     createdAt?: string;
     featured?: boolean;
     isNew?: boolean;
+    image?: string;
   }
   
   export interface CategoryData {

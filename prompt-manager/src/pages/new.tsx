@@ -11,6 +11,7 @@ export default function NewPrompt() {
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
+    const [image, setImage] = useState('');
     const [rating, setRating] = useState<number>(8.0);
     const [featured, setFeatured] = useState(false);
     const [isNew, setIsNew] = useState(true);
@@ -62,6 +63,7 @@ export default function NewPrompt() {
             description,
             category,
             content,
+            image,
             createdAt: format(new Date(), 'yyyy-MM-dd'),
             updatedAt: format(new Date(), 'yyyy-MM-dd'),
             featured,
@@ -291,6 +293,26 @@ export default function NewPrompt() {
                                                 <option value="">暂无分类</option>
                                             )}
                                         </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-apple-darkGray mb-1">
+                                            配图URL
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={image}
+                                            onChange={(e) => setImage(e.target.value)}
+                                            className="input-apple"
+                                            placeholder="可选，图片的完整URL地址"
+                                        />
+                                        {image && (
+                                            <img
+                                                src={image}
+                                                alt="配图预览"
+                                                className="mt-2 rounded-lg max-h-40 object-cover"
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </div>

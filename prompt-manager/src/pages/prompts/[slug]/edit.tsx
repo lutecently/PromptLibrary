@@ -13,6 +13,7 @@ export default function EditPrompt() {
     const [description, setDescription] = useState('');
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('');
+    const [image, setImage] = useState('');
     const [rating, setRating] = useState<number>(8.0);
     const [featured, setFeatured] = useState(false);
     const [isNew, setIsNew] = useState(true);
@@ -45,6 +46,7 @@ export default function EditPrompt() {
                 setDescription(promptData.description);
                 setContent(promptData.content);
                 setCategory(promptData.category);
+                setImage(promptData.image || '');
                 setFeatured(promptData.featured);
                 setIsNew(promptData.isNew);
                 setCreatedAt(promptData.createdAt);
@@ -91,6 +93,7 @@ export default function EditPrompt() {
             description,
             category,
             content,
+            image,
             featured,
             isNew,
             rating
@@ -250,6 +253,26 @@ export default function EditPrompt() {
                                                 <option value="">暂无分类</option>
                                             )}
                                         </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-apple-darkGray mb-1">
+                                            配图URL
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={image}
+                                            onChange={(e) => setImage(e.target.value)}
+                                            className="input-apple"
+                                            placeholder="可选，图片的完整URL地址"
+                                        />
+                                        {image && (
+                                            <img
+                                                src={image}
+                                                alt="配图预览"
+                                                className="mt-2 rounded-lg max-h-40 object-cover"
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </div>

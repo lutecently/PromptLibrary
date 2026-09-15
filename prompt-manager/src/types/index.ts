@@ -36,6 +36,8 @@ export interface PromptFrontmatter {
   tags: string[];
   /** 作者 */
   author: string;
+  /** 配图URL */
+  image?: string;
 }
 
 /**

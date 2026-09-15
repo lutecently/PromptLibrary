@@ -18,7 +18,8 @@ function convertToPromptData(prompt: Prompt): PromptData {
     rating: prompt.rating,
     createdAt: prompt.createdAt,
     featured: prompt.featured,
-    isNew: prompt.isNew
+    isNew: prompt.isNew,
+    image: prompt.image
   };
 }
 

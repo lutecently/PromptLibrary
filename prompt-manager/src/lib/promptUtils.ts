@@ -119,6 +119,7 @@ export function getPromptBySlug(slug: string): Prompt | null {
       category: data.category || '',
       author: data.author || '',
       tags: data.tags || [],
+      image: data.image || '',
       content,
       createdAt: data.createdAt || metadata.createdAt || new Date().toISOString(),
       updatedAt: data.updatedAt || metadata.updatedAt || data.createdAt || metadata.createdAt || new Date().toISOString(),
@@ -165,6 +166,7 @@ export function createPrompt(
       category: promptData.category,
       author: promptData.author,
       tags: promptData.tags,
+      image: promptData.image || '',
     };
     
     // 使用字符串格式生成markdown文件内容
@@ -260,6 +262,7 @@ export function updatePrompt(slug: string, promptData: Partial<Prompt>): boolean
       category: updatedPrompt.category,
       author: updatedPrompt.author,
       tags: updatedPrompt.tags,
+      image: updatedPrompt.image || '',
     };
     
     // 使用字符串格式生成markdown文件内容

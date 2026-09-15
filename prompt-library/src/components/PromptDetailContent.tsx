@@ -165,6 +165,11 @@ export default function PromptDetailContent({ prompt }: PromptDetailContentProps
                 <Link href="/prompts" className="back-link" prefetch={true}>
                     <i className="fa-solid fa-arrow-left"></i> {t('ui.back_to_all_prompts')}
                 </Link>
+                {prompt.image && (
+                    <div className="prompt-detail-image">
+                        <img src={prompt.image} alt={prompt.title} />
+                    </div>
+                )}
                 <h1>{prompt.title}</h1>
                 <div className="prompt-meta">
                     <span className="category">{categoryName}</span>

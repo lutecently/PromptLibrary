@@ -56,6 +56,11 @@ export default function PromptCard({ prompt, featured = false, isNew = false }: 
   return (
     <div className={`prompt-card ${featured ? 'featured' : ''}`}>
       {renderLabels()}
+      {prompt.image && (
+        <div className="prompt-card-image">
+          <img src={prompt.image} alt={prompt.title} loading="lazy" />
+        </div>
+      )}
       <h3>{prompt.title}</h3>
       <p>{prompt.description}</p>
       <div className="prompt-meta">

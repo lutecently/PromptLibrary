@@ -21,6 +21,7 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onDelete, isNew: explic
         rating,
         createdAt,
         featured,
+        image,
     } = prompt;
 
     // 格式化日期
@@ -32,6 +33,11 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onDelete, isNew: explic
 
     return (
         <div className="bg-white rounded-xl shadow-apple-sm hover:shadow-apple-md transition-shadow duration-300 overflow-hidden">
+            {image && (
+                <div className="w-full h-32 overflow-hidden">
+                    <img src={image} alt={title} className="w-full h-full object-cover" />
+                </div>
+            )}
             <div className="p-6">
                 <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">
