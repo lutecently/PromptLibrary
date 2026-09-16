@@ -1,36 +1,10 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '../lib/i18n';
-import { useLanguage } from '../context/LanguageContext';
 
 export default function AboutContent() {
-    const { locale } = useLanguage();
-    const { t, isLoaded } = useTranslation();
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (isLoaded) {
-            setLoading(false);
-        }
-    }, [isLoaded]);
-
-    if (loading) {
-        return (
-            <main className="about-page">
-                <section className="page-header">
-                    <h1>...</h1>
-                    <p>...</p>
-                </section>
-                <section className="content-section skeleton-loading">
-                    <div className="skeleton"></div>
-                    <div className="skeleton"></div>
-                    <div className="skeleton"></div>
-                </section>
-            </main>
-        );
-    }
+    const { t } = useTranslation();
 
     return (
         <main>
@@ -65,4 +39,4 @@ export default function AboutContent() {
             </section>
         </main>
     );
-} 
+}

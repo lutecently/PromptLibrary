@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslation } from '../lib/i18n';
-import { useLanguage } from '../context/LanguageContext';
 import { CategoryData, PromptData } from '@/types';
 import dynamic from 'next/dynamic';
 
-// 动态导入客户端组件，避免服务器端渲染错误
+// Dynamically import the client component to avoid server-rendering issues
 const PaginatedPrompts = dynamic(() => import('@/components/PaginatedPrompts'), { ssr: false });
 
 interface CategoryDetailContentProps {
@@ -16,41 +14,13 @@ interface CategoryDetailContentProps {
 }
 
 export default function CategoryDetailContent({ category, categoryPrompts }: CategoryDetailContentProps) {
-    const { locale } = useLanguage();
-    const { t, isLoaded } = useTranslation();
-    const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
 
-    useEffect(() => {
-        if (isLoaded) {
-            setLoading(false);
-        }
-    }, [isLoaded]);
-
-    // 使用翻译键或直接使用名称
     const categoryName = category.nameKey ? t(category.nameKey) : category.name;
 
-    // 只传递第一页数据作为初始数据
+    // Only pass the first page of data as the initial data
     const initialPageData = categoryPrompts.slice(0, 9);
     const totalPages = Math.ceil(categoryPrompts.length / 9);
-
-    if (loading) {
-        return (
-            <main>
-                <section className="page-header">
-                    <Link href="/categories" className="back-link">
-                        <i className="fa-solid fa-arrow-left"></i> ...
-                    </Link>
-                    <h1>...</h1>
-                    <p>...</p>
-                </section>
-                <section className="prompts-list skeleton-loading">
-                    {[...Array(6)].map((_, i) => (
-                        <div key={i} className="prompt-card skeleton"></div>
-                    ))}
-                </section>
-            </main>
-        );
-    }
 
     return (
         <main>
@@ -86,4 +56,4 @@ export default function CategoryDetailContent({ category, categoryPrompts }: Cat
             </section>
         </main>
     );
-} 
+}

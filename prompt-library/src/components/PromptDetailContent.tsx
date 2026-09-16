@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { PromptData } from '@/types';
 import { useTranslation } from '../lib/i18n';
-import { useLanguage } from '../context/LanguageContext';
+import { getCategoryDisplayName } from '../lib/categoryLabels';
 import PromptActions from '@/components/PromptActions';
 
 interface PromptDetailContentProps {
@@ -12,24 +12,16 @@ interface PromptDetailContentProps {
 }
 
 export default function PromptDetailContent({ prompt }: PromptDetailContentProps) {
-    const { locale } = useLanguage();
-    const { t, isLoaded } = useTranslation();
-    const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
     const [isExpanded, setIsExpanded] = useState(false);
     const contentRef = useRef<HTMLDivElement>(null);
     const [needsToggle, setNeedsToggle] = useState(false);
     const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
 
-    useEffect(() => {
-        if (isLoaded) {
-            setLoading(false);
-        }
-    }, [isLoaded]);
-
-    // 检测内容是否需要展开/收起按钮
+    // Detect whether the content needs an expand/collapse toggle
     useEffect(() => {
         if (contentRef.current) {
-            // 如果内容高度超过容器，显示展开/收起按钮
+            // Show the toggle if the content overflows its container
             const checkOverflow = () => {
                 if (contentRef.current) {
                     const isOverflowing = contentRef.current.scrollHeight > contentRef.current.clientHeight;
@@ -37,30 +29,30 @@ export default function PromptDetailContent({ prompt }: PromptDetailContentProps
                 }
             };
 
-            // 初始检查
+            // Initial check
             checkOverflow();
 
-            // 当窗口大小改变时重新检查
+            // Re-check on window resize
             window.addEventListener('resize', checkOverflow);
 
             return () => {
                 window.removeEventListener('resize', checkOverflow);
             };
         }
-    }, [loading, prompt.content]);
+    }, [prompt.content]);
 
-    // 监听滚动事件，检测是否滚动到底部
+    // Watch scrolling to detect when the content is scrolled to the bottom
     useEffect(() => {
         const contentElement = contentRef.current;
         if (!contentElement) return;
 
         const handleScroll = () => {
             if (contentElement) {
-                // 判断是否滚动到底部 (容差为2像素)
+                // 2px tolerance for "at the bottom"
                 const scrollPosition = contentElement.scrollHeight - contentElement.scrollTop - contentElement.clientHeight;
                 const isAtBottom = scrollPosition < 2;
 
-                // 如果状态变化了，才更新状态，避免不必要的重新渲染
+                // Only update state on change, to avoid unnecessary re-renders
                 if (isAtBottom !== isScrolledToBottom) {
                     setIsScrolledToBottom(isAtBottom);
                 }
@@ -69,7 +61,7 @@ export default function PromptDetailContent({ prompt }: PromptDetailContentProps
 
         contentElement.addEventListener('scroll', handleScroll);
 
-        // 初始检查
+        // Initial check
         handleScroll();
 
         return () => {
@@ -77,94 +69,34 @@ export default function PromptDetailContent({ prompt }: PromptDetailContentProps
         };
     }, [isScrolledToBottom]);
 
-    // 切换展开/收起状态
+    // Toggle expanded/collapsed state
     const toggleContent = () => {
-        console.log('当前状态:', isExpanded, '切换到:', !isExpanded);
         setIsExpanded(!isExpanded);
-        // 重置滚动状态
+        // Reset scroll state
         setIsScrolledToBottom(false);
     };
 
-    // 为分类名称映射到翻译键
-    const getCategoryTranslationKey = (category: string) => {
-        switch (category) {
-            case '内容创作': return 'categories.content_creation';
-            case '编程开发': return 'categories.programming';
-            case '创意设计': return 'categories.creative_design';
-            case '数据分析': return 'categories.data_analysis';
-            case '营销推广': return 'categories.marketing';
-            case '教育学习': return 'categories.education';
-            case '其他': return 'categories.other';
-            default: return '';
-        }
-    };
+    const categoryName = getCategoryDisplayName(prompt.category);
 
-    // 确定分类名称显示方式
-    const categoryKey = getCategoryTranslationKey(prompt.category);
-    const categoryName = categoryKey ? t(categoryKey) : prompt.category;
-
-    // 格式化日期
     const formatDate = (dateString: string) => {
         try {
-            const date = new Date(dateString);
-            return locale === 'zh'
-                ? date.toLocaleDateString('zh-CN')
-                : date.toLocaleDateString('en-US');
+            return new Date(dateString).toLocaleDateString('en-US');
         } catch (e) {
             return dateString;
         }
     };
 
-    if (loading) {
-        return (
-            <main className="prompt-detail">
-                <section className="prompt-header">
-                    <Link href="/prompts" className="back-link skeleton" prefetch={true}>
-                        <i className="fa-solid fa-arrow-left"></i> ...
-                    </Link>
-                    <h1 className="skeleton">...</h1>
-                    <div className="prompt-meta">
-                        <span className="category skeleton">...</span>
-                        <span className="popularity skeleton">...</span>
-                        <span className="date skeleton">...</span>
-                    </div>
-                </section>
-
-                <section className="prompt-content">
-                    <div className="description">
-                        <h2 className="skeleton">...</h2>
-                        <p className="skeleton">...</p>
-                    </div>
-
-                    <div className="content">
-                        <h2 className="skeleton">...</h2>
-                        <div className="markdown-content skeleton">...</div>
-                    </div>
-
-                    <div className="usage">
-                        <h2 className="skeleton">...</h2>
-                        <p className="skeleton">...</p>
-                    </div>
-                </section>
-
-                <section className="prompt-actions">
-                    <button className="copy-button skeleton" disabled>
-                        <i className="fa-solid fa-copy"></i> ...
-                    </button>
-                    <button className="share-button skeleton" disabled>
-                        <i className="fa-solid fa-share-nodes"></i> ...
-                    </button>
-                </section>
-            </main>
-        );
-    }
-
     return (
         <main className="prompt-detail">
             <section className="prompt-header">
-                <Link href="/prompts" className="back-link" prefetch={true}>
-                    <i className="fa-solid fa-arrow-left"></i> {t('ui.back_to_all_prompts')}
-                </Link>
+                <div className="prompt-header-top">
+                    <Link href="/prompts" className="back-link" prefetch={true}>
+                        <i className="fa-solid fa-arrow-left"></i> {t('ui.back_to_all_prompts')}
+                    </Link>
+                    <Link href={`/admin/prompts/${prompt.slug}/edit`} className="back-link">
+                        <i className="fa-solid fa-pen"></i> Edit
+                    </Link>
+                </div>
                 {prompt.image && (
                     <div className="prompt-detail-image">
                         <img src={prompt.image} alt={prompt.title} />
@@ -233,4 +165,4 @@ export default function PromptDetailContent({ prompt }: PromptDetailContentProps
             <PromptActions prompt={prompt} />
         </main>
     );
-} 
+}

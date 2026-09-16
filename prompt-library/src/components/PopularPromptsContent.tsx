@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { PromptData } from '@/types';
 import PromptCard from '@/components/PromptCard';
 import { useTranslation } from '../lib/i18n';
-import { useLanguage } from '../context/LanguageContext';
 import styles from '@/app/prompts/popular/page.module.css';
 
 interface PopularPromptsContentProps {
@@ -13,20 +12,14 @@ interface PopularPromptsContentProps {
 }
 
 export default function PopularPromptsContent({ prompts }: PopularPromptsContentProps) {
-    const { locale } = useLanguage();
-    const { t, isLoaded } = useTranslation();
-    const [loading, setLoading] = useState(true);
-    // 设置排序方式的状态
+    const { t } = useTranslation();
+    // Track the current sort method
     const [sortMethod, setSortMethod] = useState<'rating' | 'date'>('rating');
-    // 获取最近9个提示的创建时间
+    // The creation dates of the 9 most recent prompts
     const [recentPromptDates, setRecentPromptDates] = useState<Date[]>([]);
 
     useEffect(() => {
-        if (isLoaded) {
-            setLoading(false);
-        }
-
-        // 获取最近9个提示的创建时间
+        // The creation dates of the 9 most recent prompts
         if (prompts.length > 0) {
             const dates = [...prompts]
                 .sort((a, b) => {
@@ -40,78 +33,57 @@ export default function PopularPromptsContent({ prompts }: PopularPromptsContent
 
             setRecentPromptDates(dates);
         }
-    }, [isLoaded, prompts]);
+    }, [prompts]);
 
-    // 检查提示是否为新提示
+    // Check whether a prompt counts as "new"
     const isNewPrompt = (prompt: PromptData) => {
         if (!prompt.createdAt) return false;
         const promptDate = new Date(prompt.createdAt);
         return recentPromptDates.some(date =>
             date.getTime() === promptDate.getTime() ||
-            // 容忍1秒的误差，解决可能的精度问题
+            // Tolerate a 1-second gap to account for precision issues
             Math.abs(date.getTime() - promptDate.getTime()) < 1000
         );
     };
 
-    // 排序函数
+    // Sorting function
     const sortPrompts = (promptList: PromptData[], sortMethod: 'rating' | 'date'): PromptData[] => {
         try {
             if (sortMethod === 'rating') {
                 return [...promptList].sort((a, b) => {
                     if (a.rating !== undefined && b.rating !== undefined) {
-                        return b.rating - a.rating; // 降序排列，最高评分排在前面
+                        return b.rating - a.rating; // Descending order, highest rating first
                     }
-                    // 如果没有评分，则将有评分的排在前面
+                    // If a prompt has no rating, put rated prompts first
                     if (a.rating !== undefined) return -1;
                     if (b.rating !== undefined) return 1;
                     return 0;
                 });
             } else {
-                // 按日期排序
+                // Sort by date
                 return [...promptList].sort((a, b) => {
                     if (a.createdAt && b.createdAt) {
                         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
                     }
-                    // 如果没有日期，则将有日期的排在前面
+                    // If a prompt has no date, put dated prompts first
                     if (a.createdAt) return -1;
                     if (b.createdAt) return 1;
                     return 0;
                 });
             }
         } catch (error) {
-            console.error('排序过程中出错:', error);
-            return promptList; // 发生错误时返回原始列表
+            console.error('Error while sorting:', error);
+            return promptList; // Return the original list if an error occurs
         }
     };
 
-    // 处理排序方式变更
+    // Handle a change in sort method
     const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSortMethod(e.target.value as 'rating' | 'date');
     };
 
-    // 排序提示词
+    // Sort the prompts
     const sortedPrompts = sortPrompts(prompts, sortMethod);
-
-    if (loading) {
-        return (
-            <div className="container mx-auto px-4 py-8">
-                <div className={styles['page-header']}>
-                    <h1 className={styles['page-title']}>...</h1>
-                    <p className={styles['page-description']}>...</p>
-                </div>
-
-                <div className={`${styles['filter-bar']} skeleton-loading`}>
-                    <div className="skeleton"></div>
-                </div>
-
-                <div className={`${styles['prompt-grid']} skeleton-loading`}>
-                    {[...Array(9)].map((_, index) => (
-                        <div key={index} className="prompt-card skeleton"></div>
-                    ))}
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -122,10 +94,10 @@ export default function PopularPromptsContent({ prompts }: PopularPromptsContent
                 </p>
             </div>
 
-            {/* 筛选/排序菜单 */}
+            {/* Filter/sort menu */}
             <div className={styles['filter-bar']}>
                 <div className={styles['filter-menu']}>
-                    <span className={styles['filter-label']}>{t('ui.sort_by')}：</span>
+                    <span className={styles['filter-label']}>{t('ui.sort_by')}:</span>
                     <select
                         className={styles['filter-select']}
                         value={sortMethod}
@@ -138,7 +110,7 @@ export default function PopularPromptsContent({ prompts }: PopularPromptsContent
                 <div className={styles['results-count']}>{t('search.results_count', { count: sortedPrompts.length.toString() })}</div>
             </div>
 
-            {/* 提示词列表 */}
+            {/* Prompt list */}
             {sortedPrompts.length > 0 ? (
                 <div className={styles['prompt-grid']}>
                     {sortedPrompts.slice(0, 9).map((prompt) => (
@@ -170,7 +142,7 @@ export default function PopularPromptsContent({ prompts }: PopularPromptsContent
                 </div>
             )}
 
-            {/* 底部导航 */}
+            {/* Bottom navigation */}
             <div className={styles.pagination}>
                 <Link href="/prompts" className={styles['pagination-link']}>
                     <i className="fa-solid fa-arrow-left"></i> {t('ui.all_prompts')}
@@ -181,4 +153,4 @@ export default function PopularPromptsContent({ prompts }: PopularPromptsContent
             </div>
         </div>
     );
-} 
+}

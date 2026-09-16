@@ -3,19 +3,15 @@
 import Link from 'next/link';
 import { CategoryData } from '@/types';
 import { useTranslation } from '../lib/i18n';
-import { useLanguage } from '../context/LanguageContext';
 
 interface CategoryItemProps {
   category: CategoryData;
 }
 
 export default function CategoryItem({ category }: CategoryItemProps) {
-  const { locale } = useLanguage();
   const { t } = useTranslation();
 
-  // 确保count有值
   const promptCount = category.count?.toString() || '0';
-  // 使用翻译键或直接使用名称
   const categoryName = category.nameKey ? t(category.nameKey) : category.name;
 
   return (

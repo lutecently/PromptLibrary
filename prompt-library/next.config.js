@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  output: "export",
+  // Only statically export for the production GitHub Pages build (see
+  // scripts/build-static.js). `next dev` needs a real server so the local
+  // admin routes (creating/editing/deleting prompts) can run.
+  output: process.env.STATIC_EXPORT === "true" ? "export" : undefined,
   images: {
     unoptimized: true,
   },
@@ -50,10 +53,6 @@ const nextConfig = {
           {
             from: "public/data",
             to: "PromptLibrary/data",
-          },
-          {
-            from: "public/locales",
-            to: "PromptLibrary/locales",
           },
         ],
       })

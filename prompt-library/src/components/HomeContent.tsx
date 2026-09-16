@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PromptCard from '@/components/PromptCard';
 import CategoryItem from '@/components/CategoryItem';
 import Hero from '@/components/Hero';
 import { PromptData, CategoryData } from '@/types';
 import { useTranslation } from '../lib/i18n';
-import { useLanguage } from '../context/LanguageContext';
 
 interface HomeContentProps {
     featuredPrompts: PromptData[];
@@ -16,67 +14,13 @@ interface HomeContentProps {
 }
 
 export default function HomeContent({ featuredPrompts, recentPrompts, categories }: HomeContentProps) {
-    const { locale } = useLanguage();
-    const { t, isLoaded } = useTranslation();
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (isLoaded) {
-            setLoading(false);
-        }
-    }, [isLoaded]);
-
-    if (loading) {
-        return (
-            <main>
-                <Hero />
-
-                {/* 特色提示词 */}
-                <section className="featured">
-                    <div className="section-header">
-                        <h2>...</h2>
-                        <div className="view-all skeleton"></div>
-                    </div>
-                    <div className="prompt-grid skeleton-loading">
-                        {[...Array(3)].map((_, index) => (
-                            <div key={index} className="prompt-card skeleton"></div>
-                        ))}
-                    </div>
-                </section>
-
-                {/* 分类浏览 */}
-                <section className="categories">
-                    <div className="section-header">
-                        <h2>...</h2>
-                    </div>
-                    <div className="category-container skeleton-loading">
-                        {[...Array(categories.length)].map((_, index) => (
-                            <div key={index} className="category-item skeleton"></div>
-                        ))}
-                    </div>
-                </section>
-
-                {/* 最近添加 */}
-                <section className="recent">
-                    <div className="section-header">
-                        <h2>...</h2>
-                        <div className="view-all skeleton"></div>
-                    </div>
-                    <div className="prompt-grid skeleton-loading">
-                        {[...Array(3)].map((_, index) => (
-                            <div key={index} className="prompt-card skeleton"></div>
-                        ))}
-                    </div>
-                </section>
-            </main>
-        );
-    }
+    const { t } = useTranslation();
 
     return (
         <main>
             <Hero />
 
-            {/* 特色提示词 */}
+            {/* Featured prompts */}
             <section className="featured">
                 <div className="section-header">
                     <h2>{t('homepage.featured_prompts')}</h2>
@@ -96,7 +40,7 @@ export default function HomeContent({ featuredPrompts, recentPrompts, categories
                 </div>
             </section>
 
-            {/* 分类浏览 */}
+            {/* Browse categories */}
             <section className="categories">
                 <div className="section-header">
                     <h2>{t('categories.title')}</h2>
@@ -108,7 +52,7 @@ export default function HomeContent({ featuredPrompts, recentPrompts, categories
                 </div>
             </section>
 
-            {/* 最近添加 */}
+            {/* Recently added */}
             <section className="recent">
                 <div className="section-header">
                     <h2>{t('homepage.recently_added')}</h2>
@@ -129,4 +73,4 @@ export default function HomeContent({ featuredPrompts, recentPrompts, categories
             </section>
         </main>
     );
-} 
+}

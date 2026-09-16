@@ -1,54 +1,11 @@
 "use client";
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { useTranslation } from '../lib/i18n';
-import { loadTranslation } from '../lib/i18n';
-import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isLoadError, setIsLoadError] = useState(false);
-  const { locale, isChangingLanguage } = useLanguage();
-  const { t, isLoaded: translationsLoaded } = useTranslation();
-
-  useEffect(() => {
-    // 更新加载状态
-    if (translationsLoaded) {
-      setIsLoaded(true);
-      setIsLoadError(false);
-    }
-  }, [translationsLoaded]);
-
-  // 如果出错，显示简化版页脚
-  if (isLoadError) {
-    return (
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-logo">
-            Prompt<span>Library</span>
-          </div>
-          <div className="footer-bottom">
-            <p>© {currentYear} PromptLibrary.</p>
-          </div>
-        </div>
-      </footer>
-    );
-  }
-
-  // 如果仍在加载中，显示简化版页脚
-  if (!isLoaded) {
-    return (
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-logo">
-            Prompt<span>Library</span>
-          </div>
-        </div>
-      </footer>
-    );
-  }
+  const { t } = useTranslation();
 
   return (
     <footer className="footer">

@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Script from 'next/script'
-import { LanguageProvider } from '@/context/LanguageContext'
 
 export const metadata: Metadata = {
   title: 'Prompt Library - Explore the Art of AI Prompting',
@@ -17,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="zh-CN">
+    <html lang="en">
       <head>
         <link
           rel="preload"
@@ -41,13 +40,11 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <LanguageProvider>
-          <div className="container">
-            <Header />
-            {children}
-            <Footer />
-          </div>
-        </LanguageProvider>
+        <div className="container">
+          <Header />
+          {children}
+          <Footer />
+        </div>
         <Script
           src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"
           strategy="lazyOnload"

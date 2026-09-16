@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PromptData } from '@/types';
 import { useTranslation } from '../lib/i18n';
-import { useLanguage } from '../context/LanguageContext';
 
 interface PromptActionsProps {
     prompt: PromptData;
@@ -12,19 +11,10 @@ interface PromptActionsProps {
 export default function PromptActions({ prompt }: PromptActionsProps) {
     const [copyStatus, setCopyStatus] = useState('');
     const [showShareModal, setShowShareModal] = useState(false);
-    const { locale } = useLanguage();
-    const { t, isLoaded } = useTranslation();
-    const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
 
-    useEffect(() => {
-        if (isLoaded) {
-            setLoading(false);
-        }
-    }, [isLoaded]);
-
-    // 获取干净的提示词内容（移除HTML标签）
+    // Get the prompt's plain-text content (strip HTML tags)
     const getCleanPromptContent = () => {
-        // 使用临时元素解析HTML
         if (!prompt.content) return '';
 
         const tempElement = document.createElement('div');
@@ -32,7 +22,7 @@ export default function PromptActions({ prompt }: PromptActionsProps) {
         return tempElement.textContent || tempElement.innerText || '';
     };
 
-    // 复制提示词到剪贴板
+    // Copy the prompt to the clipboard
     const handleCopy = async () => {
         const content = getCleanPromptContent();
 
@@ -40,65 +30,48 @@ export default function PromptActions({ prompt }: PromptActionsProps) {
             await navigator.clipboard.writeText(content);
             setCopyStatus('success');
 
-            // 3秒后重置状态
+            // Reset the status after 3 seconds
             setTimeout(() => {
                 setCopyStatus('');
             }, 3000);
         } catch (err) {
             setCopyStatus('error');
 
-            // 3秒后重置状态
             setTimeout(() => {
                 setCopyStatus('');
             }, 3000);
         }
     };
 
-    // 打开分享模态框
+    // Open the share modal
     const handleShare = () => {
         setShowShareModal(true);
     };
 
-    // 关闭分享模态框
+    // Close the share modal
     const handleCloseModal = () => {
         setShowShareModal(false);
     };
 
-    // 复制分享链接
+    // Copy the share link
     const handleCopyLink = async () => {
-        // 获取当前URL
         const shareUrl = window.location.href;
 
         try {
             await navigator.clipboard.writeText(shareUrl);
             setCopyStatus('link-copied');
 
-            // 3秒后重置状态
             setTimeout(() => {
                 setCopyStatus('');
             }, 3000);
         } catch (err) {
             setCopyStatus('link-error');
 
-            // 3秒后重置状态
             setTimeout(() => {
                 setCopyStatus('');
             }, 3000);
         }
     };
-
-    if (loading) {
-        return (
-            <section className="prompt-actions">
-                <button className="copy-button" disabled>
-                    <i className="fa-solid fa-copy"></i> ...
-                </button>
-                <button className="share-button" disabled>
-                    <i className="fa-solid fa-share-nodes"></i> ...
-                </button>
-            </section>
-        );
-    }
 
     return (
         <section className="prompt-actions">
@@ -111,7 +84,7 @@ export default function PromptActions({ prompt }: PromptActionsProps) {
                 <i className="fa-solid fa-share-nodes"></i> {t('ui.share')}
             </button>
 
-            {/* 分享模态框 */}
+            {/* Share modal */}
             {showShareModal && (
                 <div className="modal-overlay" onClick={handleCloseModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -186,4 +159,4 @@ export default function PromptActions({ prompt }: PromptActionsProps) {
             )}
         </section>
     );
-} 
+}

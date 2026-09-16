@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { PromptData } from '@/types';
 import { useTranslation } from '../lib/i18n';
-import { useLanguage } from '../context/LanguageContext';
+import { getCategoryDisplayName } from '../lib/categoryLabels';
 
 interface PromptCardProps {
   prompt: PromptData;
@@ -12,31 +12,14 @@ interface PromptCardProps {
 }
 
 export default function PromptCard({ prompt, featured = false, isNew = false }: PromptCardProps) {
-  const { locale } = useLanguage();
   const { t } = useTranslation();
 
-  // 为分类名称映射到翻译键
-  const getCategoryTranslationKey = (category: string) => {
-    switch (category) {
-      case '内容创作': return 'categories.content_creation';
-      case '编程开发': return 'categories.programming';
-      case '创意设计': return 'categories.creative_design';
-      case '数据分析': return 'categories.data_analysis';
-      case '营销推广': return 'categories.marketing';
-      case '教育学习': return 'categories.education';
-      case '其他': return 'categories.other';
-      default: return '';
-    }
-  };
+  const categoryName = getCategoryDisplayName(prompt.category);
 
-  // 确定分类名称显示方式
-  const categoryKey = getCategoryTranslationKey(prompt.category);
-  const categoryName = categoryKey ? t(categoryKey) : prompt.category;
-
-  // 渲染标签
+  // Render badges
   const renderLabels = () => {
     if (featured && isNew) {
-      // 如果同时是 featured 和 new，显示组合标签
+      // Both featured and new: show a combined badge
       return (
         <div className="prompt-label combined">
           <span className="new-part">{t('prompt_card.new')}</span>
@@ -44,10 +27,8 @@ export default function PromptCard({ prompt, featured = false, isNew = false }: 
         </div>
       );
     } else if (featured) {
-      // 只有 featured
       return <div className="prompt-label">{t('prompt_card.featured')}</div>;
     } else if (isNew) {
-      // 只有 new
       return <div className="prompt-label new">{t('prompt_card.new')}</div>;
     }
     return null;
