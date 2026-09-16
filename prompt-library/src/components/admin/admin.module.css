@@ -77,6 +77,42 @@
   display: block;
 }
 
+.imageModeToggle {
+  display: inline-flex;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.imageModeButton {
+  background: none;
+  border: none;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.imageModeButton:not(:last-child) {
+  border-right: 1px solid var(--border-color);
+}
+
+.imageModeButtonActive {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.imageStatus {
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.imageStatusError {
+  color: var(--danger-color);
+}
+
 .checkboxRow {
   display: flex;
   align-items: center;

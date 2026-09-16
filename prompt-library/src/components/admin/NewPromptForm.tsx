@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { CategoryData } from '@/types';
 import { useTranslation } from '@/lib/i18n';
+import ImageField from './ImageField';
 import styles from './admin.module.css';
 
 interface NewPromptFormProps {
@@ -113,14 +114,8 @@ export default function NewPromptForm({ categories }: NewPromptFormProps) {
         </div>
 
         <div className={styles.field}>
-          <label>Image URL</label>
-          <input
-            type="url"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            placeholder="Optional, the full URL of an image"
-          />
-          {image && <img src={image} alt="Preview" className={styles.imagePreview} />}
+          <label>Image</label>
+          <ImageField value={image} onChange={setImage} />
         </div>
 
         <div className={styles.field}>

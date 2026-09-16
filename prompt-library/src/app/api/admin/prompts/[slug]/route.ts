@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPromptBySlug, updatePrompt, deletePrompt } from '@/lib/promptUtils';
 import { regenerateStaticData } from '@/lib/regenerateStaticData';
+import { deleteStoredImage } from '@/lib/imageStorage';
 
 interface RouteParams {
   params: { slug: string };
@@ -35,6 +36,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Failed to save prompt' }, { status: 500 });
     }
 
+    // Clean up the old uploaded image if it was replaced
+    if (body.image !== existingPrompt.image) {
+      deleteStoredImage(existingPrompt.image);
+    }
+
     regenerateStaticData();
 
     const updatedPrompt = getPromptBySlug(slug);
@@ -58,6 +64,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (!success) {
       return NextResponse.json({ error: 'Failed to delete prompt' }, { status: 500 });
     }
+
+    deleteStoredImage(existingPrompt.image);
 
     regenerateStaticData();
 
