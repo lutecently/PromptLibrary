@@ -1,5 +1,18 @@
 [
   {
+    "slug": "minimalist-modular-geometric-collage-1789524063789",
+    "title": "Minimalist modular geometric collage",
+    "description": "Converts photo to Minimalist modular geometric collage style.",
+    "category": "内容创作",
+    "author": "",
+    "tags": [],
+    "image": "",
+    "featured": false,
+    "createdAt": "2026-09-16T02:01:03.789Z",
+    "updatedAt": "2026-09-16T02:01:03.789Z",
+    "rating": 8
+  },
+  {
     "slug": "cusor-rule-sample",
     "title": "cursor rule提示词样例",
     "description": "在cursor中使用，用来指导约束AI，使AI编码效率更高",
@@ -82,17 +95,5 @@
     "rating": 9.4,
     "createdAt": "2025-02-05",
     "featured": false
-  },
-  {
-    "slug": "digital-marketing-strategy",
-    "title": "数字营销策略规划",
-    "description": "根据业务目标和目标受众创建全面的数字营销策略，包括渠道选择、内容计划和KPI设定。",
-    "category": "营销推广",
-    "author": "",
-    "tags": [],
-    "featured": false,
-    "createdAt": "2025-02-05",
-    "updatedAt": "2025-03-21T06:56:49.127Z",
-    "rating": 9.2
   }
 ]

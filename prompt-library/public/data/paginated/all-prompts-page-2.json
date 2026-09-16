@@ -1,5 +1,17 @@
 [
   {
+    "slug": "digital-marketing-strategy",
+    "title": "数字营销策略规划",
+    "description": "根据业务目标和目标受众创建全面的数字营销策略，包括渠道选择、内容计划和KPI设定。",
+    "category": "营销推广",
+    "author": "",
+    "tags": [],
+    "featured": false,
+    "createdAt": "2025-02-05",
+    "updatedAt": "2025-03-21T06:56:49.127Z",
+    "rating": 9.2
+  },
+  {
     "slug": "logo-design-brief",
     "title": "Logo设计指南",
     "description": "根据品牌价值观和目标受众创建详细的Logo设计方案，包括风格、颜色、字体和应用场景建议。",
@@ -70,14 +82,5 @@
     "rating": 9.1,
     "createdAt": "2025-01-22",
     "featured": false
-  },
-  {
-    "slug": "code-optimization-assistant",
-    "title": "代码优化助手",
-    "description": "分析并优化您的代码，提供性能改进建议和最佳实践指导。",
-    "category": "编程开发",
-    "rating": 9.5,
-    "createdAt": "2025-01-20",
-    "featured": true
   }
 ]
